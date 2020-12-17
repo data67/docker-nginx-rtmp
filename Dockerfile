@@ -39,17 +39,23 @@ RUN cd /tmp && \
   wget https://github.com/arut/nginx-rtmp-module/archive/v${NGINX_RTMP_VERSION}.tar.gz && \
   tar zxf v${NGINX_RTMP_VERSION}.tar.gz && rm v${NGINX_RTMP_VERSION}.tar.gz
 
+# Get nginx-vod module.
+RUN cd /tmp && \
+  wget -O nginx-vod-module-1.27.tar.gz https://codeload.github.com/kaltura/nginx-vod-module/tar.gz/1.27 && \
+  tar zxf nginx-vod-module-1.27.tar.gz && rm nginx-vod-module-1.27.tar.gz
+
 # Compile nginx with nginx-rtmp module.
 RUN cd /tmp/nginx-${NGINX_VERSION} && \
   ./configure \
   --prefix=/usr/local/nginx \
   --add-module=/tmp/nginx-rtmp-module-${NGINX_RTMP_VERSION} \
+  --add-module=/tmp/nginx-vod-module-1.27 \
   --conf-path=/etc/nginx/nginx.conf \
   --with-threads \
   --with-file-aio \
   --with-http_ssl_module \
   --with-debug \
-  --with-cc-opt="-Wimplicit-fallthrough=0" && \
+  --with-cc-opt="-Wimplicit-fallthrough=0 -O3" && \
   cd /tmp/nginx-${NGINX_VERSION} && make && make install
 
 ###############################
